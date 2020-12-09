@@ -1,4 +1,6 @@
 import socket
+import json
+from Server.database import Database
 
 
 class Server:
@@ -8,12 +10,14 @@ class Server:
         self.socket = socket.socket()
         self.socket.bind((str(server_ip), int(port)))
         self.socket.listen(1)
+        self.db = Database()
         self.connection = None
         self.address = None
         self.bufer_size = 0
         self.json_data = 0
 
-    def main(self):
+    def start(self):
+        print('запустился сервер')
         try:
             while 1:
                 self.connection, self.address = self.socket.accept()
@@ -30,6 +34,11 @@ class Server:
                 data_recieve = self.connection.recv(int(self.bufer_size)).decode('utf-8')
 
                 data_recieve = json.loads(data_recieve)
+
+                self.db.write_new_id(data_recieve["Message"]["Id"], data_recieve["Message"]["PubKey"])
+
+                print(data_recieve)
+                print('recieved')
 
         except Exception as ex:
             print(ex)

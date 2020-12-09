@@ -6,7 +6,7 @@ def msg(type, data):
         try:
             query = {"Type": "PubKey",
                     "Message": {"PubKey": data[0],
-                                "Id": data[0]
+                                "Id": data[1]
                                 }
                     }
             to_send = json.dumps(query)
