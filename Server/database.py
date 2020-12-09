@@ -7,12 +7,12 @@ class Database:
     def __init__(self):
         self.filename = 'Server/persistance-users.json'
 
-    def write_new_id(self, user_id, pubkey, server_pub, server_priv):
+    def write_new_id(self, user_id, pubkey):
         users = self.get_users()  # loading users from database
         users_df = pd.DataFrame(users)  # dataframe of user from database (to be faster than for loop)
         df_users_ids = list(users_df["Id"])  # list of users ids to find if id already exists
-        pub, priv = self.get_str_keys(server_pub, server_priv)
-        new_user_set = {"Id": user_id, "PubKey": pubkey, "Server PubKey": pub, "Server PrivKey": priv}  # dict to add in  df
+
+        new_user_set = {"Id": user_id, "PubKey": pubkey}  # dict to add in  df
 
         # check if user already exists
         if user_id in df_users_ids:
@@ -45,9 +45,3 @@ class Database:
     def write_users(self, data):
         with open(self.filename, 'w') as file:
             file.write(json.dumps(data))
-
-    # converting rsa keys to str
-    def get_str_keys(self, pubkey, privkey):
-        pubkey = pubkey.save_pkcs1().decode()
-        privkey = privkey.save_pkcs1().decode()
-        return pubkey, privkey
