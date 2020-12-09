@@ -28,6 +28,8 @@ class Database:
         to_write = new_df.to_dict(orient='records')  # converting to json
         self.write_users(to_write)
 
+    # getting data from database
+    # TODO: Change json to SQL
     def get_users(self):
         try:
             with open(self.filename, 'r') as file:
@@ -38,6 +40,8 @@ class Database:
             data_to_send = []
             return data_to_send
 
+    # writing data to database
+    # TODO: Change json to SQL
     def write_users(self, data):
         with open(self.filename, 'w') as file:
             file.write(json.dumps(data))

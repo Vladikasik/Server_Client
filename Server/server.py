@@ -35,7 +35,12 @@ class Server:
 
                 data_recieve = json.loads(data_recieve)
 
-                self.db.write_new_id(data_recieve["Message"]["Id"], data_recieve["Message"]["PubKey"])
+                query_type = data_recieve["Type"]
+                if query_type == "PubKey":
+                    self.db.write_new_id(data_recieve["Message"]["Id"], data_recieve["Message"]["PubKey"])
+                elif query_type == "Message":
+                    if self.db.user_exists():
+                        privKey = self.db.get_privkey(data_recieve)
 
                 print(data_recieve)
                 print('recieved')
