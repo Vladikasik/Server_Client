@@ -1,6 +1,7 @@
 import socket
 import json
 from Server.database import Database
+import rsa
 
 
 class Server:
@@ -15,6 +16,8 @@ class Server:
         self.address = None
         self.bufer_size = 0
         self.json_data = 0
+
+        (self.my_pubkey, self.privkey) = rsa.newkeys(2048)
 
     def start(self):
         print('запустился сервер')
@@ -37,9 +40,10 @@ class Server:
 
                 query_type = data_recieve["Type"]
                 if query_type == "PubKey":
-                    self.db.write_new_id(data_recieve["Message"]["Id"], data_recieve["Message"]["PubKey"])
+                    self.db.write_new_id(data_recieve["Message"]["Id"], data_recieve["Message"]["PubKey"], self.my_pubkey, self.privkey)
                 elif query_type == "Message":
-                    if self.db.user_exists():
+                    if self.db.user_exists(data_recieve):
+                        print('Message from registrated user -', data_recieve["Message"]["Id"])
                         privKey = self.db.get_privkey(data_recieve)
 
                 print(data_recieve)
