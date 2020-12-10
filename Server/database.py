@@ -7,14 +7,12 @@ class Database:
     def __init__(self):
         self.filename = 'Server/persistance-users.json'
 
-    def write_new_id(self, user_id, pubkey, server_pubkey, server_priv_key):
+    def write_new_id(self, user_id, pubkey):
         users = self.get_users()  # loading users from database
         users_df = pd.DataFrame(users)  # dataframe of user from database (to be faster than for loop)
         df_users_ids = list(users_df["Id"])  # list of users ids to find if id already exists
 
-        server_pubkey, server_priv_key = self.get_str_keys(server_pubkey, server_priv_key)  # rsa keys to str
-
-        new_user_set = {"Id": user_id, "PubKey": pubkey, "ServerPubKey": server_pubkey, "ServerPrivKey": server_priv_key}  # dict to add in  df
+        new_user_set = {"Id": user_id, "PubKey": pubkey}  # dict to add in  df
 
         # check if user already exists
         if user_id in df_users_ids:
@@ -38,7 +36,6 @@ class Database:
                 data_to_send = json.load(file)
             return data_to_send
         except Exception as ex:
-            print("Error in opening db")
             print(ex)
             data_to_send = []
             return data_to_send
@@ -47,23 +44,4 @@ class Database:
     # TODO: Change json to SQL
     def write_users(self, data):
         with open(self.filename, 'w') as file:
-            file.write(json.dumps(data, indent=4))
-
-    # converting rsa keys to str by pkcs1 algrythm?
-    def get_str_keys(self, pub, priv):
-        pub = pub.save_pkcs1().decode()
-        priv = priv.save_pkcs1().decode()
-        return pub, priv
-
-    # if user exists check
-    def user_exists(self, data):
-        user_id = data["Message"]["Id"]
-        users = self.get_users()  # loading users from database
-        users_df = pd.DataFrame(users)  # dataframe of user from database (to be faster than for loop)
-        df_users_ids = list(users_df["Id"])  # list of users ids to find if id already exists
-
-        # check if user already exists
-        if user_id in df_users_ids:
-            return 1
-        else:
-            return 0
+            file.write(json.dumps(data))
