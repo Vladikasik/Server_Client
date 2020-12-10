@@ -19,7 +19,7 @@ def msg(query_type, data):
     elif query_type == 'Message':
         try:
             encrypted_data = rsa.encrypt(data[1].encode('utf-8'), data[2])
-            print(encrypted_data.decode('utf-8'))
+            # print(str(encrypted_data))
             query = {"Type": "Message",
                      "Message": {"Id": data[0],
                                  "Data": encrypted_data
